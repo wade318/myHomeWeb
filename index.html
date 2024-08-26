@@ -36,23 +36,27 @@
         button:hover {
             background-color: #0056b3;
         }
-        #history {
+        button.active {
+            background-color: #FFD700;
+            color: #333;
+        }
+        #history, #results, #largeTestResults {
             margin-top: 30px;
             text-align: left;
             max-width: 600px;
             margin: 0 auto;
         }
-        #history table {
+        #history table, #results table, #largeTestResults table {
             width: 100%;
             border-collapse: collapse;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #history th, #history td {
+        #history th, #history td, #results th, #results td, #largeTestResults th, #largeTestResults td {
             padding: 15px;
             border: 1px solid #ddd;
             text-align: center;
         }
-        #history th {
+        #history th, #results th, #largeTestResults th {
             background-color: #007BFF;
             color: #fff;
         }
@@ -62,22 +66,32 @@
         #clearHistory:hover {
             background-color: #d43f3f;
         }
+        .button-group {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>抽奖选项生成器</h1>
-    <button onclick="startDrawing()">开始抽奖</button>
-    <button id="clearHistory" onclick="clearHistory()">清除历史记录</button>
+    <h1>第三屆家幸福社區 管理委員會主委抽籤</h1>
+    <div class="button-group">
+        <button id="startFormalBtn" onclick="setMode('formal')">正式開始</button>
+        <button id="startTestRunBtn" onclick="setMode('testRun')">抽籤試跑</button>
+        <button id="startLargeTestBtn" onclick="setMode('largeTest')">大數測試</button>
+    </div>
+    <div class="button-group">
+        <button onclick="startDrawing()">開始抽籤</button>
+        <button id="clearHistory" onclick="clearHistory()">清除歷史紀錄</button>
+    </div>
     <p id="randomOption"></p>
 
     <div id="history">
-        <h2>历史记录</h2>
+        <h2>歷史紀錄</h2>
         <table>
             <thead>
                 <tr>
-                    <th>次数</th>
-                    <th>结果</th>
+                    <th>次數</th>
+                    <th>結果</th>
                 </tr>
             </thead>
             <tbody id="historyBody">
@@ -86,14 +100,28 @@
         </table>
     </div>
 
+    <div id="results">
+        <!-- 这里将会插入正式抽籤的结果 -->
+    </div>
+
+    <div id="largeTestResults">
+        <h2>大數測試結果</h2>
+        <ul id="largeTestList">
+            <!-- 这里将会插入大數測試结果 -->
+        </ul>
+    </div>
+
     <script>
         let interval;
         let drawCount = 0;
+        let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
         let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
+        const roles = ['主委', '委員1', '委員2', '委員3'];
+        let currentMode = ''; // 标记当前模式
 
         function startDrawing() {
-            if (options.length === 0) {
-                alert('所有选项已被抽取完毕！');
+            if (options.length === 0 || (currentMode === 'formal' && currentRole > 3)) {
+                alert('抽籤已完成或沒有更多選項！');
                 return;
             }
 
@@ -102,17 +130,22 @@
                 const randomIndex = Math.floor(Math.random() * options.length);
                 document.getElementById('randomOption').textContent = options[randomIndex];
                 counter++;
-            }, 30); // 每50毫秒更新一次，速度更快
+            }, 30); // 每30毫秒更新一次，速度更快
 
             setTimeout(() => {
-                clearInterval(interval); // 五秒后停止更新
+                clearInterval(interval); // 0.3秒后停止更新
                 const finalIndex = Math.floor(Math.random() * options.length);
                 const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
                 document.getElementById('randomOption').textContent = '你抽取到的选项是: ' + finalOption;
 
-                drawCount++;
-                addToHistory(drawCount, finalOption);
-            }, 300); // 5秒
+                if (currentMode === 'formal') {
+                    document.getElementById(`role${currentRole}`).textContent = finalOption;
+                    currentRole++;
+                } else if (currentMode === 'testRun') {
+                    drawCount++;
+                    addToHistory(drawCount, finalOption);
+                }
+            }, 300); // 0.3秒
         }
 
         function addToHistory(count, result) {
@@ -134,9 +167,105 @@
             document.getElementById('historyBody').innerHTML = '';
             drawCount = 0;
             document.getElementById('randomOption').textContent = '';
+            currentRole = 0;
             options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
+            resetButtons(); // 重置按钮颜色
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            resetButtons(); // 重置按钮颜色
+
+            if (mode === 'formal') {
+                document.getElementById('startFormalBtn').classList.add('active');
+                startFormal();
+            } else if (mode === 'testRun') {
+                document.getElementById('startTestRunBtn').classList.add('active');
+                startTestRun();
+            } else if (mode === 'largeTest') {
+                document.getElementById('startLargeTestBtn').classList.add('active');
+                startLargeTest();
+            }
+        }
+
+        function resetButtons() {
+            document.getElementById('startFormalBtn').classList.remove('active');
+            document.getElementById('startTestRunBtn').classList.remove('active');
+            document.getElementById('startLargeTestBtn').classList.remove('active');
+        }
+
+        function startFormal() {
+            clearHistory(); // 清除历史记录
+
+            // 更新历史记录为正式抽籤
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = `
+                <h2>正式抽籤</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>職位</th>
+                            <th>結果</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr><td>主委</td><td id="role0"></td></tr>
+                        <tr><td>委員1</td><td id="role1"></td></tr>
+                        <tr><td>委員2</td><td id="role2"></td></tr>
+                        <tr><td>委員3</td><td id="role3"></td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function startTestRun() {
+            clearHistory(); // 清除历史记录
+
+            // 恢复历史记录为试跑模式
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = `
+                <h2>歷史紀錄</h
+
+2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>次數</th>
+                            <th>結果</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- 这里将会插入历史记录 -->
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function startLargeTest() {
+            clearHistory(); // 清除历史记录
+
+            // 进行大数测试
+            let results = {};
+            for (let i = 0; i < 100; i++) {
+                const finalIndex = Math.floor(Math.random() * options.length);
+                const finalOption = options[finalIndex];
+                if (results[finalOption]) {
+                    results[finalOption]++;
+                } else {
+                    results[finalOption] = 1;
+                }
+            }
+
+            const largeTestList = document.getElementById('largeTestList');
+            largeTestList.innerHTML = '';
+
+            for (let option in results) {
+                const percentage = ((results[option] / 100) * 100).toFixed(2) + '%';
+                const listItem = document.createElement('li');
+                listItem.textContent = `${option}: ${percentage}`;
+                largeTestList.appendChild(listItem);
+            }
         }
     </script>
-
 </body>
 </html>
