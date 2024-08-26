@@ -3,36 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机数字生成器</title>
+    <title>抽奖选项生成器</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
             text-align: center;
             padding: 50px;
         }
-        #randomNumber {
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+        #randomOption {
             font-size: 2em;
             margin-top: 20px;
-            color: #333;
+            color: #007BFF;
+            font-weight: bold;
+            min-height: 50px;
         }
         button {
             padding: 10px 20px;
-            font-size: 1em;
+            font-size: 1.2em;
+            margin: 10px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #history {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #history table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #history th, #history td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        #history th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        #clearHistory {
+            background-color: #ff4c4c;
+        }
+        #clearHistory:hover {
+            background-color: #d43f3f;
         }
     </style>
 </head>
 <body>
 
-    <h1>随机数字生成器</h1>
-    <button onclick="generateRandomNumber()">生成随机数字</button>
-    <p id="randomNumber"></p>
+    <h1>抽奖选项生成器</h1>
+    <button onclick="startDrawing()">开始抽奖</button>
+    <button id="clearHistory" onclick="clearHistory()">清除历史记录</button>
+    <p id="randomOption"></p>
+
+    <div id="history">
+        <h2>历史记录</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>次数</th>
+                    <th>结果</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody">
+                <!-- 这里将会插入历史记录 -->
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        function generateRandomNumber() {
-            const randomNum = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('randomNumber').textContent = '你抽取到的数字是: ' + randomNum;
+        let interval;
+        let drawCount = 0;
+        let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
+
+        function startDrawing() {
+            if (options.length === 0) {
+                alert('所有选项已被抽取完毕！');
+                return;
+            }
+
+            let counter = 0;
+            interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * options.length);
+                document.getElementById('randomOption').textContent = options[randomIndex];
+                counter++;
+            }, 30); // 每50毫秒更新一次，速度更快
+
+            setTimeout(() => {
+                clearInterval(interval); // 五秒后停止更新
+                const finalIndex = Math.floor(Math.random() * options.length);
+                const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
+                document.getElementById('randomOption').textContent = '你抽取到的选项是: ' + finalOption;
+
+                drawCount++;
+                addToHistory(drawCount, finalOption);
+            }, 300); // 5秒
+        }
+
+        function addToHistory(count, result) {
+            const historyBody = document.getElementById('historyBody');
+            const newRow = document.createElement('tr');
+
+            const countCell = document.createElement('td');
+            countCell.textContent = count;
+            newRow.appendChild(countCell);
+
+            const resultCell = document.createElement('td');
+            resultCell.textContent = result;
+            newRow.appendChild(resultCell);
+
+            historyBody.appendChild(newRow);
+        }
+
+        function clearHistory() {
+            document.getElementById('historyBody').innerHTML = '';
+            drawCount = 0;
+            document.getElementById('randomOption').textContent = '';
+            options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
         }
     </script>
 
