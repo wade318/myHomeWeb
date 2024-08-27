@@ -36,21 +36,12 @@
         button:hover {
             background-color: #0056b3;
         }
-
-
-
-        /* button.selected {
-            background-color: #0056b3 !important; 
-            color: #fff; 
-        } */
         button.selected {
-            background-color: #004080; /* 選中時變深藍色 */
+            background-color: #004080; 
             color: #fff;
-            box-shadow: 0 0 10px 2px rgba(1, 75, 125, 0.8); /* 添加黃色光影 */
-            transition: box-shadow 0.3s ease; /* 添加平滑過渡效果 */
+            box-shadow: 0 0 10px 2px rgba(1, 75, 125, 0.8);
+            transition: box-shadow 0.3s ease;
         }
-
-        
         #history, #results, #largeTestResults {
             margin-top: 20px;
             text-align: left;
@@ -144,14 +135,37 @@
         </ul>
     </div>
 
+    <button onclick="toggleLayout()">切换排版</button>
+
     <script>
         let interval;
+                let isCompactLayout = false;
         let drawCount = 0;
         let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
         let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
         const roles = ['主委', '委員1', '委員2', '委員3'];
         let isFormal = false; // 标记是否为正式开始
         let isTestRun = false; // 标记是否为抽籤试跑
+function toggleLayout() {
+    if (isCompactLayout) {
+        document.body.style.padding = '20px';
+        document.querySelector('h1').style.fontSize = '2em';
+        document.querySelectorAll('button').forEach(button => {
+            button.style.fontSize = '1em';
+            button.style.padding = '10px';
+        });
+        document.getElementById('randomOption').style.fontSize = '1.5em';
+    } else {
+        document.body.style.padding = '50px';
+        document.querySelector('h1').style.fontSize = '2.5em';
+        document.querySelectorAll('button').forEach(button => {
+            button.style.fontSize = '1.2em';
+            button.style.padding = '10px 20px';
+        });
+        document.getElementById('randomOption').style.fontSize = '2em';
+    }
+    isCompactLayout = !isCompactLayout;
+}
 
         function startDrawing() {
             if (options.length === 0 || (isFormal && currentRole > 3)) {
