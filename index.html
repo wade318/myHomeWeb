@@ -9,22 +9,22 @@
             font-family: 'Arial', sans-serif;
             background-color: #f0f8ff;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             color: #333;
         }
         #randomOption {
-            font-size: 2em;
+            font-size: 1.5em;
             margin-top: 20px;
             color: #007BFF;
             font-weight: bold;
             min-height: 50px;
         }
         button {
-            padding: 10px 20px;
-            font-size: 1.2em;
+            padding: 10px;
+            font-size: 1em;
             margin: 10px;
             cursor: pointer;
             border: none;
@@ -52,9 +52,9 @@
 
         
         #history, #results, #largeTestResults {
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: left;
-            max-width: 600px;
+            max-width: 100%;
             margin: 0 auto;
         }
         #history table, #results table {
@@ -63,7 +63,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #history th, #history td, #results th, #results td {
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
         }
@@ -78,12 +78,13 @@
             background-color: #d43f3f;
         }
         .button-group {
-            margin-top: 20px;
+            margin-top: 10px;
         }
         #largeTestResults {
             display: none;
         }
-		@media (min-width: 768px) {
+
+        @media (min-width: 768px) {
             body {
                 padding: 50px;
             }
@@ -101,7 +102,6 @@
                 margin-top: 20px;
             }
         }
-
     </style>
 </head>
 <body>
