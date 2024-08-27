@@ -9,26 +9,26 @@
             font-family: 'Arial', sans-serif;
             background-color: #f0f8ff;
             text-align: center;
-            padding: 20px;
+            padding: 50px;
         }
         h1 {
-            font-size: 2em;
+            font-size: 2.5em;
             color: #333;
             display: inline-block;
             margin: 0;
             padding: 0;
         }
         #randomOption {
-            font-size: 1.5em;
+            font-size: 2em;
             margin-top: 20px;
             color: #007BFF;
             font-weight: bold;
             min-height: 50px;
         }
         button {
-            padding: 8px 16px;
-            font-size: 1em;
-            margin: 5px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            margin: 10px;
             cursor: pointer;
             border: none;
             border-radius: 5px;
@@ -39,13 +39,25 @@
         button:hover {
             background-color: #0056b3;
         }
+
+
+
+
+        button.selected {
+            background-color: #004080; /* 選中時變深藍色 */
+            color: #fff;
+            box-shadow: 0 0 10px 2px rgba(1, 75, 125, 0.8); /* 添加黃色光影 */
+            transition: box-shadow 0.3s ease; /* 添加平滑過渡效果 */
+        }
         button.small {
             padding: 4px 8px;
             font-size: 0.8em;
             margin-left: 10px;
         }
+
+        
         #history, #results, #largeTestResults {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: left;
             max-width: 600px;
             margin: 0 auto;
@@ -56,7 +68,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #history th, #history td, #results th, #results td {
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
             text-align: center;
         }
@@ -71,7 +83,7 @@
             background-color: #d43f3f;
         }
         .button-group {
-            margin-top: 10px;
+            margin-top: 20px;
         }
         #largeTestResults {
             display: none;
@@ -87,20 +99,19 @@
 
     <div id="titleContainer">
         <h1>第三屆家幸福社區 管理委員會主委抽籤</h1>
-        <button class="small" onclick="switchToDesktop()">切換到電腦排版</button>
+        <button class="small" onclick="switchToMobile()">切換到手機排版</button>
     </div>
     <div class="button-group">
         <button onclick="startFormal()">正式開始</button>
         <button onclick="startTestRun()">抽籤試跑</button>
         <button onclick="startLargeTest()">大數測試</button>
-        <!-- <button class="small" onclick="switchToDesktop()">切換到電腦排版</button> -->
     </div>
     <div class="button-group">
         <button onclick="startDrawing()">開始抽籤</button>
         <button id="clearHistory" onclick="clearHistory()">清除歷史紀錄</button>
     </div>
     <!-- <div class="button-group">
-        <button onclick="switchToDesktop()">切换到電腦排版</button>
+        <button onclick="switchToMobile()">切换到手機排版</button>
     </div> -->
     <p id="randomOption"></p>
 
@@ -130,8 +141,13 @@
         </ul>
     </div>
 
+    <!-- <button onclick="toggleLayout()">切换排版</button> -->
+
     <script>
         let interval;
+        function switchToMobile() {
+            window.location.href = "index.html"; // 切换回手机排版页面
+        }
         let drawCount = 0;
         let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
         let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
@@ -168,9 +184,6 @@
             }, 300); // 0.3秒
         }
 
-        function switchToDesktop() {
-            window.location.href = "index_desktop.html"; // 切换到桌面排版页面
-        }
         function addToHistory(count, result) {
             const historyBody = document.getElementById('historyBody');
             const newRow = document.createElement('tr');
