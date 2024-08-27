@@ -36,27 +36,23 @@
         button:hover {
             background-color: #0056b3;
         }
-        button.active {
-            background-color: #FFD700;
-            color: #333;
-        }
         #history, #results, #largeTestResults {
             margin-top: 30px;
             text-align: left;
             max-width: 600px;
             margin: 0 auto;
         }
-        #history table, #results table, #largeTestResults table {
+        #history table, #results table {
             width: 100%;
             border-collapse: collapse;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #history th, #history td, #results th, #results td, #largeTestResults th, #largeTestResults td {
+        #history th, #history td, #results th, #results td {
             padding: 15px;
             border: 1px solid #ddd;
             text-align: center;
         }
-        #history th, #results th, #largeTestResults th {
+        #history th, #results th {
             background-color: #007BFF;
             color: #fff;
         }
@@ -69,15 +65,18 @@
         .button-group {
             margin-top: 20px;
         }
+        #largeTestResults {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <h1>第三屆家幸福社區 管理委員會主委抽籤</h1>
     <div class="button-group">
-        <button id="startFormalBtn" onclick="setMode('formal')">正式開始</button>
-        <button id="startTestRunBtn" onclick="setMode('testRun')">抽籤試跑</button>
-        <button id="startLargeTestBtn" onclick="setMode('largeTest')">大數測試</button>
+        <button onclick="startFormal()">正式開始</button>
+        <button onclick="startTestRun()">抽籤試跑</button>
+        <button onclick="startLargeTest()">大數測試</button>
     </div>
     <div class="button-group">
         <button onclick="startDrawing()">開始抽籤</button>
@@ -117,10 +116,11 @@
         let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
         let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
         const roles = ['主委', '委員1', '委員2', '委員3'];
-        let currentMode = ''; // 标记当前模式
+        let isFormal = false; // 标记是否为正式开始
+        let isTestRun = false; // 标记是否为抽籤试跑
 
         function startDrawing() {
-            if (options.length === 0 || (currentMode === 'formal' && currentRole > 3)) {
+            if (options.length === 0 || (isFormal && currentRole > 3)) {
                 alert('抽籤已完成或沒有更多選項！');
                 return;
             }
@@ -138,10 +138,10 @@
                 const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
                 document.getElementById('randomOption').textContent = '你抽取到的选项是: ' + finalOption;
 
-                if (currentMode === 'formal') {
+                if (isFormal) {
                     document.getElementById(`role${currentRole}`).textContent = finalOption;
                     currentRole++;
-                } else if (currentMode === 'testRun') {
+                } else {
                     drawCount++;
                     addToHistory(drawCount, finalOption);
                 }
@@ -169,33 +169,16 @@
             document.getElementById('randomOption').textContent = '';
             currentRole = 0;
             options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
-            resetButtons(); // 重置按钮颜色
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
-            resetButtons(); // 重置按钮颜色
-
-            if (mode === 'formal') {
-                document.getElementById('startFormalBtn').classList.add('active');
-                startFormal();
-            } else if (mode === 'testRun') {
-                document.getElementById('startTestRunBtn').classList.add('active');
-                startTestRun();
-            } else if (mode === 'largeTest') {
-                document.getElementById('startLargeTestBtn').classList.add('active');
-                startLargeTest();
-            }
-        }
-
-        function resetButtons() {
-            document.getElementById('startFormalBtn').classList.remove('active');
-            document.getElementById('startTestRunBtn').classList.remove('active');
-            document.getElementById('startLargeTestBtn').classList.remove('active');
+            isTestRun = false; // 重置抽籤试跑标记
+            isFormal = false; // 重置正式开始标记
+            document.getElementById('history').style.display = 'block';
+            document.getElementById('largeTestResults').style.display = 'none';
         }
 
         function startFormal() {
             clearHistory(); // 清除历史记录
+            isFormal = true;
+            isTestRun = false; // 标记正式开始
 
             // 更新历史记录为正式抽籤
             const historyDiv = document.getElementById('history');
@@ -216,17 +199,19 @@
                     </tbody>
                 </table>
             `;
+            document.getElementById('history').style.display = 'block';
+            document.getElementById('largeTestResults').style.display = 'none';
         }
 
         function startTestRun() {
             clearHistory(); // 清除历史记录
+            isFormal = false;
+            isTestRun = true; // 标记为抽籤试跑
 
             // 恢复历史记录为试跑模式
             const historyDiv = document.getElementById('history');
             historyDiv.innerHTML = `
-                <h2>歷史紀錄</h
-
-2>
+                <h2>歷史紀錄</h2>
                 <table>
                     <thead>
                         <tr>
@@ -239,33 +224,36 @@
                     </tbody>
                 </table>
             `;
+            document.getElementById('history').style.display = 'block';
+            document.getElementById('largeTestResults').style.display = 'none';
         }
 
         function startLargeTest() {
             clearHistory(); // 清除历史记录
 
-            // 进行大数测试
-            let results = {};
+            const countMap = {};
+            options.forEach(option => countMap[option] = 0);
+
             for (let i = 0; i < 100; i++) {
                 const finalIndex = Math.floor(Math.random() * options.length);
                 const finalOption = options[finalIndex];
-                if (results[finalOption]) {
-                    results[finalOption]++;
-                } else {
-                    results[finalOption] = 1;
-                }
+                countMap[finalOption]++;
             }
 
             const largeTestList = document.getElementById('largeTestList');
-            largeTestList.innerHTML = '';
+            largeTestList.innerHTML = ''; // 清除之前的测试结果
 
-            for (let option in results) {
-                const percentage = ((results[option] / 100) * 100).toFixed(2) + '%';
+            for (const [option, count] of Object.entries(countMap)) {
+                const percentage = (count / 100 * 100).toFixed(2) + '%';
                 const listItem = document.createElement('li');
                 listItem.textContent = `${option}: ${percentage}`;
                 largeTestList.appendChild(listItem);
             }
+
+            document.getElementById('history').style.display = 'none';
+            document.getElementById('largeTestResults').style.display = 'block';
         }
     </script>
+
 </body>
 </html>
