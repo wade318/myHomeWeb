@@ -36,6 +36,21 @@
         button:hover {
             background-color: #0056b3;
         }
+
+
+
+        /* button.selected {
+            background-color: #0056b3 !important; 
+            color: #fff; 
+        } */
+        button.selected {
+            background-color: #004080; /* 選中時變深藍色 */
+            color: #fff;
+            box-shadow: 0 0 10px 2px rgba(1, 75, 125, 0.8); /* 添加黃色光影 */
+            transition: box-shadow 0.3s ease; /* 添加平滑過渡效果 */
+        }
+
+        
         #history, #results, #largeTestResults {
             margin-top: 30px;
             text-align: left;
@@ -175,13 +190,40 @@
             document.getElementById('largeTestResults').style.display = 'none';
         }
 
-        function startFormal() {
-            clearHistory(); // 清除历史记录
-            isFormal = true;
-            isTestRun = false; // 标记正式开始
 
-            // 更新历史记录为正式抽籤
+        function toggleButton(button) {
+            // 重置所有按鈕的樣式
+            const buttons = document.querySelectorAll('.button-group button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            // 切換選中的按鈕的樣式
+            button.classList.add('selected');
+        }
+
+
+        function updateButtonStyles(selectedButton) {
+            const buttons = document.querySelectorAll('.button-group button');
+            buttons.forEach(button => {
+                if (button === selectedButton) {
+                    button.classList.add('selected');
+                } else {
+                    button.classList.remove('selected');
+                }
+        });
+}
+
+
+
+
+        // 修改 startFormal, startTestRun, startLargeTest 函數來使用 toggleButton
+        function startFormal() {
+            toggleButton(document.querySelector('button[onclick="startFormal()"]'));
+            clearHistory(); // 清除歷史記錄
+            isFormal = true;
+            isTestRun = false; // 標記正式開始
+            updateButtonStyles(document.querySelector('button[onclick="startFormal()"]'));
             const historyDiv = document.getElementById('history');
+
             historyDiv.innerHTML = `
                 <h2>正式抽籤</h2>
                 <table>
@@ -199,16 +241,13 @@
                     </tbody>
                 </table>
             `;
-            document.getElementById('history').style.display = 'block';
-            document.getElementById('largeTestResults').style.display = 'none';
         }
 
         function startTestRun() {
-            clearHistory(); // 清除历史记录
+            toggleButton(document.querySelector('button[onclick="startTestRun()"]'));
+            clearHistory(); // 清除歷史記錄
             isFormal = false;
-            isTestRun = true; // 标记为抽籤试跑
-
-            // 恢复历史记录为试跑模式
+            isTestRun = true; // 標記為抽籤試跑
             const historyDiv = document.getElementById('history');
             historyDiv.innerHTML = `
                 <h2>歷史紀錄</h2>
@@ -220,39 +259,41 @@
                         </tr>
                     </thead>
                     <tbody id="historyBody">
-                        <!-- 这里将会插入历史记录 -->
+                        <!-- 這裡將會插入歷史記錄 -->
                     </tbody>
                 </table>
             `;
-            document.getElementById('history').style.display = 'block';
-            document.getElementById('largeTestResults').style.display = 'none';
         }
 
         function startLargeTest() {
-            clearHistory(); // 清除历史记录
-
-            const countMap = {};
-            options.forEach(option => countMap[option] = 0);
-
-            for (let i = 0; i < 100; i++) {
-                const finalIndex = Math.floor(Math.random() * options.length);
-                const finalOption = options[finalIndex];
-                countMap[finalOption]++;
-            }
-
-            const largeTestList = document.getElementById('largeTestList');
-            largeTestList.innerHTML = ''; // 清除之前的测试结果
-
-            for (const [option, count] of Object.entries(countMap)) {
-                const percentage = (count / 100 * 100).toFixed(2) + '%';
-                const listItem = document.createElement('li');
-                listItem.textContent = `${option}: ${percentage}`;
-                largeTestList.appendChild(listItem);
-            }
-
+            toggleButton(document.querySelector('button[onclick="startLargeTest()"]'));
+            clearHistory(); // 清除歷史記錄
+            updateButtonStyles(document.querySelector('button[onclick="startLargeTest()"]'));
+            isFormal = false;
+            isTestRun = false; // 標記為大數測試
             document.getElementById('history').style.display = 'none';
             document.getElementById('largeTestResults').style.display = 'block';
+            const largeTestList = document.getElementById('largeTestList');
+            largeTestList.innerHTML = ''; // 清除先前的結果
+            let testResults = {};
+            let testCount = 10000;
+            for (let i = 0; i < testCount; i++) {
+                const randomIndex = Math.floor(Math.random() * options.length);
+                const option = options[randomIndex];
+                testResults[option] = (testResults[option] || 0) + 1;
+            }
+            for (let option in testResults) {
+				const percentage = (testResults[option] / 10000 * 100).toFixed(2) + '%';
+                const li = document.createElement('li');
+                li.textContent = `${option}: ${percentage}`;
+                largeTestList.appendChild(li);
+            }
         }
+
+
+
+
+
     </script>
 
 </body>
