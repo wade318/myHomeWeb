@@ -39,11 +39,42 @@
         button:hover {
             background-color: #0056b3;
         }
+        button.selected {
+            background-color: #004080; /* 選中時變深藍色 */
+            color: #fff;
+            box-shadow: 0 0 10px 2px rgba(1, 75, 125, 0.8); /* 添加黃色光影 */
+            transition: box-shadow 0.3s ease; /* 添加平滑過渡效果 */
+        }
         button.small {
             padding: 4px 8px;
-            font-size: 0.6em;
+            font-size: 0.5em;
             margin-left: 10px;
         }
+
+        .label {
+            background-color: #555555;  /* 灰色背景 */
+            color: white;               /* 白色文字 */
+            padding: 10px 15px;         /* 內邊距 */
+            border-radius: 20px;        /* 圓角 */
+            display: inline-block;      /* 讓 div 像文字一樣排列 */
+            font-size: 14px;            /* 字體大小 */
+            font-family: Arial, sans-serif; /* 字體 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 添加陰影效果 */
+        }
+
+        .dashed-label {
+            border: 1px dashed #000000;  /* 設置邊框為2像素的虛線，顏色為黑色 */
+            background-color: #cccccc;   /* 白色背景 */
+            color: #000000;              /* 黑色文字 */
+            padding: 10px 15px;          /* 內邊距，確保文字周圍有足夠空間 */
+            border-radius: 5px;          /* 圓角效果，可調整 */
+            font-size: 14px;             /* 字體大小 */
+            font-family: Arial, sans-serif; /* 字體 */
+            display: inline-block;       /* 讓 div 像文字一樣排列 */
+        }
+
+
+
         #history, #results, #largeTestResults {
             margin-top: 20px;
             text-align: left;
@@ -125,7 +156,7 @@
     </div>
 
     <div id="largeTestResults">
-        <h2>大數測試結果</h2>
+        <h2>大數測試結果</h2>        
         <ul id="largeTestList">
             <!-- 这里将会插入大數測試结果 -->
         </ul>
@@ -133,10 +164,19 @@
 
     <script>
         let interval;
+        function switchToDesktop() {
+            window.location.href = "index_desktop.html"; // 切换到桌面排版页面
+        }
         let drawCount = 0;
         let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
-        let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
-        const roles = ['主委', '委員1', '委員2', '委員3'];
+        // let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
+        let options = [
+                'A1', 'A2', 'A3', 'A5', 'A6',
+                'B1', 'B2', 'B3', 'B5', 'B6',
+                'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
+                'D1', 'D2', 'D3', 'D5', 'D6'
+            ];
+        const roles = ['主任委員', '副主任委員', '財務委員', '管理委員'];
         let isFormal = false; // 标记是否为正式开始
         let isTestRun = false; // 标记是否为抽籤试跑
 
@@ -169,9 +209,7 @@
             }, 300); // 0.3秒
         }
 
-        function switchToDesktop() {
-            window.location.href = "index_desktop.html"; // 切换到桌面排版页面
-        }
+
         function addToHistory(count, result) {
             const historyBody = document.getElementById('historyBody');
             const newRow = document.createElement('tr');
@@ -192,7 +230,15 @@
             drawCount = 0;
             document.getElementById('randomOption').textContent = '';
             currentRole = 0;
-            options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
+            // options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
+            let options = [
+                'A1', 'A2', 'A3', 'A5', 'A6',
+                'B1', 'B2', 'B3', 'B5', 'B6',
+                'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
+                'D1', 'D2', 'D3', 'D5', 'D6'
+            ];
+
+
             isTestRun = false; // 重置抽籤试跑标记
             isFormal = false; // 重置正式开始标记
             document.getElementById('history').style.display = 'block';
@@ -274,6 +320,31 @@
             `;
         }
 
+        // function startLargeTest() {
+        //     toggleButton(document.querySelector('button[onclick="startLargeTest()"]'));
+        //     clearHistory(); // 清除歷史記錄
+        //     updateButtonStyles(document.querySelector('button[onclick="startLargeTest()"]'));
+        //     isFormal = false;
+        //     isTestRun = false; // 標記為大數測試
+        //     document.getElementById('history').style.display = 'none';
+        //     document.getElementById('largeTestResults').style.display = 'block';
+        //     const largeTestList = document.getElementById('largeTestList');
+        //     largeTestList.innerHTML = ''; // 清除先前的結果
+        //     let testResults = {};
+        //     let testCount = 10000;
+        //     for (let i = 0; i < testCount; i++) {
+        //         const randomIndex = Math.floor(Math.random() * options.length);
+        //         const option = options[randomIndex];
+        //         testResults[option] = (testResults[option] || 0) + 1;
+        //     }
+        //     for (let option in testResults) {
+		// 		const percentage = (testResults[option] / 10000 * 100).toFixed(2) + '%';
+        //         const li = document.createElement('li');
+        //         li.textContent = `${option}: ${percentage}`;
+        //         largeTestList.appendChild(li);
+        //     }
+        // }
+
         function startLargeTest() {
             toggleButton(document.querySelector('button[onclick="startLargeTest()"]'));
             clearHistory(); // 清除歷史記錄
@@ -282,23 +353,45 @@
             isTestRun = false; // 標記為大數測試
             document.getElementById('history').style.display = 'none';
             document.getElementById('largeTestResults').style.display = 'block';
+            
             const largeTestList = document.getElementById('largeTestList');
             largeTestList.innerHTML = ''; // 清除先前的結果
+
             let testResults = {};
             let testCount = 10000;
+
+            // 模擬大數測試，隨機選取選項
             for (let i = 0; i < testCount; i++) {
                 const randomIndex = Math.floor(Math.random() * options.length);
                 const option = options[randomIndex];
                 testResults[option] = (testResults[option] || 0) + 1;
             }
-            for (let option in testResults) {
-				const percentage = (testResults[option] / 10000 * 100).toFixed(2) + '%';
+
+            // 将结果转换为可排序的数组格式，并按字母顺序排序
+            let sortedResults = Object.entries(testResults).sort((a, b) => a[0].localeCompare(b[0]));
+
+            // 生成排序后的结果列表
+            sortedResults.forEach(([option, count]) => {
+                const percentage = (count / testCount * 100).toFixed(2) + '%';
                 const li = document.createElement('li');
                 li.textContent = `${option}: ${percentage}`;
                 largeTestList.appendChild(li);
-            }
+            });
+
+            // 调试日志
+            console.log("Test Results:", testResults);
+            console.log("Sorted Results:", sortedResults);
         }
 
+
+
+
+
+
+        // 頁面加載時自動啟動「抽籤試跑」
+        window.onload = function() {
+            startTestRun();
+        };
 
 
 
