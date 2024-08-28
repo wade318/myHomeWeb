@@ -12,7 +12,7 @@
             padding: 20px;
         }
         h1 {
-            font-size: 1.5em;
+            font-size: 1.2em;
             color: #333;
             display: inline-block;
             margin: 0;
@@ -129,7 +129,7 @@
     </div>
     <div class="button-group">
         <button onclick="startDrawing()">開始抽籤</button>
-        <button id="clearHistory" onclick="clearHistory()">清除歷史紀錄</button>
+        <button id="clearHistory" onclick="clearItemHistory()">清除歷史紀錄</button>
     </div>
     <!-- <div class="button-group">
         <button onclick="switchToDesktop()">切换到電腦排版</button>
@@ -169,48 +169,71 @@
         }
         let drawCount = 0;
         let currentRole = 0; // 0: 主委, 1: 委員1, 2: 委員2, 3: 委員3
-        // let options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6'];
         let options = [
-                'A1', 'A2', 'A3', 'A5', 'A6',
-                'B1', 'B2', 'B3', 'B5', 'B6',
-                'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
-                'D1', 'D2', 'D3', 'D5', 'D6'
-            ];
+            'A1', 'A2', 'A3', 'A5', 'A6',
+            'B1', 'B2', 'B3', 'B5', 'B6',
+            'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
+            'D1', 'D2', 'D3', 'D5', 'D6'
+        ];
         const roles = ['主任委員', '副主任委員', '財務委員', '管理委員'];
         let isFormal = false; // 标记是否为正式开始
         let isTestRun = false; // 标记是否为抽籤试跑
-
+    
         function startDrawing() {
             if (options.length === 0 || (isFormal && currentRole > 3)) {
                 alert('抽籤已完成或沒有更多選項！');
                 return;
             }
-
+    
             let counter = 0;
             interval = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * options.length);
                 document.getElementById('randomOption').textContent = options[randomIndex];
                 counter++;
             }, 30); // 每30毫秒更新一次，速度更快
-
+    
             setTimeout(() => {
                 clearInterval(interval); // 0.3秒后停止更新
                 const finalIndex = Math.floor(Math.random() * options.length);
                 const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
                 document.getElementById('randomOption').textContent = '你抽取到的选项是: ' + finalOption;
-
+    
                 if (isFormal) {
                     document.getElementById(`role${currentRole}`).textContent = finalOption;
+                    removeSamples(currentRole); // 根据职位移除样本
                     currentRole++;
                 } else {
                     drawCount++;
                     addToHistory(drawCount, finalOption);
                 }
+    
+                console.log(`剩余选项: ${options.join(', ')}`);
             }, 300); // 0.3秒
         }
-
-
-        function addToHistory(count, result) {
+    
+        function removeSamples(role) {
+            // 根据当前的角色来移除指定的样本
+            const removalMap = {
+                0: ['B2', 'B6'],    // 主任委員
+                1: ['C6'],           // 副主任委員
+                2: ['D3'],           // 財務委員
+                3: ['A1']            // 管理委員
+            };
+    
+            const toRemove = removalMap[role];
+            toRemove.forEach(sample => {
+                const index = options.indexOf(sample);
+                if (index > -1) {
+                    options.splice(index, 1);
+                }
+            });
+    
+            // 打印已移除的样本和剩余样本的日志
+            console.log(`移除了 ${roles[role]} 的样本: ${toRemove.join(', ')}`);
+            console.log(`剩余选项: ${options.join(', ')}`);
+        }
+    
+                function addToHistory(count, result) {
             const historyBody = document.getElementById('historyBody');
             const newRow = document.createElement('tr');
 
@@ -225,37 +248,47 @@
             historyBody.appendChild(newRow);
         }
 
+
+
         function clearHistory() {
             document.getElementById('historyBody').innerHTML = '';
             drawCount = 0;
             document.getElementById('randomOption').textContent = '';
             currentRole = 0;
-            // options = ['B1', 'B2', 'B3', 'B5', 'B6', 'A1', 'A2', 'A3', 'A5', 'A6', 'C1', 'C2', 'C3', 'C5', 'C6']; // 重新初始化选项列表
-            let options = [
+            options = [
                 'A1', 'A2', 'A3', 'A5', 'A6',
                 'B1', 'B2', 'B3', 'B5', 'B6',
                 'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
                 'D1', 'D2', 'D3', 'D5', 'D6'
             ];
-
-
+    
             isTestRun = false; // 重置抽籤试跑标记
             isFormal = false; // 重置正式开始标记
             document.getElementById('history').style.display = 'block';
             document.getElementById('largeTestResults').style.display = 'none';
+
+        }
+    
+        function clearItemHistory() {
+            if (isFormal) {
+                startFormal();
+            } else if (isTestRun) {
+                startTestRun();
+            } else {
+                startLargeTest();
+            }
         }
 
-
+   
         function toggleButton(button) {
             // 重置所有按鈕的樣式
             const buttons = document.querySelectorAll('.button-group button');
             buttons.forEach(btn => btn.classList.remove('selected'));
-
+    
             // 切換選中的按鈕的樣式
             button.classList.add('selected');
         }
-
-
+    
         function updateButtonStyles(selectedButton) {
             const buttons = document.querySelectorAll('.button-group button');
             buttons.forEach(button => {
@@ -264,12 +297,9 @@
                 } else {
                     button.classList.remove('selected');
                 }
-        });
-}
-
-
-
-
+            });
+        }
+    
         // 修改 startFormal, startTestRun, startLargeTest 函數來使用 toggleButton
         function startFormal() {
             toggleButton(document.querySelector('button[onclick="startFormal()"]'));
@@ -320,31 +350,6 @@
             `;
         }
 
-        // function startLargeTest() {
-        //     toggleButton(document.querySelector('button[onclick="startLargeTest()"]'));
-        //     clearHistory(); // 清除歷史記錄
-        //     updateButtonStyles(document.querySelector('button[onclick="startLargeTest()"]'));
-        //     isFormal = false;
-        //     isTestRun = false; // 標記為大數測試
-        //     document.getElementById('history').style.display = 'none';
-        //     document.getElementById('largeTestResults').style.display = 'block';
-        //     const largeTestList = document.getElementById('largeTestList');
-        //     largeTestList.innerHTML = ''; // 清除先前的結果
-        //     let testResults = {};
-        //     let testCount = 10000;
-        //     for (let i = 0; i < testCount; i++) {
-        //         const randomIndex = Math.floor(Math.random() * options.length);
-        //         const option = options[randomIndex];
-        //         testResults[option] = (testResults[option] || 0) + 1;
-        //     }
-        //     for (let option in testResults) {
-		// 		const percentage = (testResults[option] / 10000 * 100).toFixed(2) + '%';
-        //         const li = document.createElement('li');
-        //         li.textContent = `${option}: ${percentage}`;
-        //         largeTestList.appendChild(li);
-        //     }
-        // }
-
         function startLargeTest() {
             toggleButton(document.querySelector('button[onclick="startLargeTest()"]'));
             clearHistory(); // 清除歷史記錄
@@ -353,10 +358,8 @@
             isTestRun = false; // 標記為大數測試
             document.getElementById('history').style.display = 'none';
             document.getElementById('largeTestResults').style.display = 'block';
-            
             const largeTestList = document.getElementById('largeTestList');
             largeTestList.innerHTML = ''; // 清除先前的結果
-
             let testResults = {};
             let testCount = 10000;
 
@@ -382,20 +385,11 @@
             console.log("Test Results:", testResults);
             console.log("Sorted Results:", sortedResults);
         }
-
-
-
-
-
-
         // 頁面加載時自動啟動「抽籤試跑」
         window.onload = function() {
             startTestRun();
         };
-
-
-
-
+    
     </script>
 
 </body>
