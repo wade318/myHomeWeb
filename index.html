@@ -184,10 +184,45 @@
         let isFormal = false; // 标记是否为正式开始
         let isTestRun = false; // 标记是否为抽籤试跑
 
+        // function startDrawing() {
+        //     if (options.length === 0 || (isFormal && currentRole > 3)) {
+        //         alert('抽籤已完成或沒有更多選項！');
+        //         return;
+        //     }
+
+        //     let counter = 0;
+        //     interval = setInterval(() => {
+        //         const randomIndex = Math.floor(Math.random() * options.length);
+        //         document.getElementById('randomOption').textContent = options[randomIndex];
+        //         counter++;
+        //     }, 30); // 每30毫秒更新一次，速度更快
+
+        //     setTimeout(() => {
+        //         clearInterval(interval); // 0.3秒后停止更新
+        //         const finalIndex = Math.floor(Math.random() * options.length);
+        //         const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
+        //         document.getElementById('randomOption').textContent = '恭喜抽到的住戶是: ' + finalOption;
+
+        //         if (isFormal) {
+        //             document.getElementById(`role${currentRole}`).textContent = finalOption;
+        //             removeSamples(currentRole); // 根据职位移除样本
+        //             currentRole++;
+        //         } else {
+        //             drawCount++;
+        //             addToHistory(drawCount, finalOption);
+        //         }
+        //         console.log(`剩余选项: ${options.join(', ')}`);
+        //     }, 300); // 0.3秒
+        // }
         function startDrawing() {
             if (options.length === 0 || (isFormal && currentRole > 3)) {
                 alert('抽籤已完成或沒有更多選項！');
                 return;
+            }
+
+            // 如果是正式抽籤，先移除樣本再進行抽取
+            if (isFormal) {
+                removeSamples(currentRole);
             }
 
             let counter = 0;
@@ -198,23 +233,28 @@
             }, 30); // 每30毫秒更新一次，速度更快
 
             setTimeout(() => {
-                clearInterval(interval); // 0.3秒后停止更新
+                clearInterval(interval); // 0.3秒後停止更新
                 const finalIndex = Math.floor(Math.random() * options.length);
-                const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
+                const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的選項
                 document.getElementById('randomOption').textContent = '恭喜抽到的住戶是: ' + finalOption;
 
                 if (isFormal) {
                     document.getElementById(`role${currentRole}`).textContent = finalOption;
-                    removeSamples(currentRole); // 根据职位移除样本
                     currentRole++;
                 } else {
                     drawCount++;
                     addToHistory(drawCount, finalOption);
                 }
-                console.log(`剩余选项: ${options.join(', ')}`);
+                console.log(`剩餘選項: ${options.join(', ')}`);
             }, 300); // 0.3秒
         }
-    
+
+
+
+
+
+
+
         function removeSamples(role) {
             // 根据当前的角色来移除指定的样本
             const removalMap = {
