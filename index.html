@@ -201,7 +201,7 @@
                 clearInterval(interval); // 0.3秒后停止更新
                 const finalIndex = Math.floor(Math.random() * options.length);
                 const finalOption = options.splice(finalIndex, 1)[0]; // 移除已抽中的选项
-                document.getElementById('randomOption').textContent = '你抽取到的选项是: ' + finalOption;
+                document.getElementById('randomOption').textContent = '恭喜抽到的住戶是: ' + finalOption;
 
                 if (isFormal) {
                     document.getElementById(`role${currentRole}`).textContent = finalOption;
@@ -218,10 +218,10 @@
         function removeSamples(role) {
             // 根据当前的角色来移除指定的样本
             const removalMap = {
-                0: ['B2', 'B6'],    // 主任委員
-                1: ['C6'],           // 副主任委員
-                2: ['D3'],           // 財務委員
-                3: ['A1']            // 管理委員
+                0: ['B2','A5','B6','C5','C7'],    // 主任委員
+                1: ['A5','B6','C5','C7'],           // 副主任委員
+                2: ['A5','B6','C5','C7'],           // 財務委員
+                3: ['A5','B6','C5','C7']            // 管理委員
             };
     
             const toRemove = removalMap[role];
