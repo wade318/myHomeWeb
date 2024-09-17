@@ -128,8 +128,8 @@
     </div>
     <div class="button-group">
         <button onclick="startFormal()">正式開始</button>
-        <!-- <button onclick="startTestRun()">抽籤試跑</button> -->
-        <!-- <button onclick="startLargeTest()">大數測試</button> -->
+        <button onclick="startTestRun()">抽籤試跑</button>
+        <button onclick="startLargeTest()">大數測試</button>
         <!-- <button class="small" onclick="switchToDesktop()">切換到電腦排版</button> -->
     </div>
     <div class="button-group">
@@ -423,7 +423,7 @@
         }
         // 頁面加載時自動啟動「抽籤試跑」
         window.onload = function() {
-            startFormal();
+            startTestRun();
         };
     
     </script>

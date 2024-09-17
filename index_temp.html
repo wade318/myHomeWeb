@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會議紀錄</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            margin: auto;
+            box-sizing: border-box;
+        }
+        h1, h2 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            word-wrap: break-word;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        /* 響應式設計，讓表格在手機上有更好的顯示效果 */
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+            h2 {
+                font-size: 1em;
+            }
+            ul, ol {
+                padding-left: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            th, td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+            th::before, td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+            }
+            th, td {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>會議紀錄</h1>
+
+        <h2>會議資訊</h2>
+        <ul>
+            <li><strong>會議日期：</strong>2024年9月10日</li>
+            <li><strong>會議時間：</strong>下午 2:00 - 4:00</li>
+            <li><strong>會議地點：</strong>台北會議中心 B101 室</li>
+            <li><strong>會議主題：</strong>年度企劃會議</li>
+        </ul>
+
+        <h2>與會人員</h2>
+        <ul>
+            <li>張小明 (主持人)</li>
+            <li>李大華 (記錄)</li>
+            <li>陳麗麗 (參與者)</li>
+            <li>王曉俊 (參與者)</li>
+        </ul>
+
+        <h2>會議議程</h2>
+        <table>
+            <tr>
+                <th data-label="時間">時間</th>
+                <th data-label="議程項目">議程項目</th>
+                <th data-label="負責人">負責人</th>
+            </tr>
+            <tr>
+                <td data-label="時間">2:00 - 2:30</td>
+                <td data-label="議程項目">開場介紹與會議目標</td>
+                <td data-label="負責人">張小明</td>
+            </tr>
+            <tr>
+                <td data-label="時間">2:30 - 3:00</td>
+                <td data-label="議程項目">年度目標回顧與分析</td>
+                <td data-label="負責人">李大華</td>
+            </tr>
+            <tr>
+                <td data-label="時間">3:00 - 3:30</td>
+                <td data-label="議程項目">下一步計畫討論</td>
+                <td data-label="負責人">陳麗麗</td>
+            </tr>
+            <tr>
+                <td data-label="時間">3:30 - 4:00</td>
+                <td data-label="議程項目">結論與行動項目</td>
+                <td data-label="負責人">王曉俊</td>
+            </tr>
+        </table>
+
+        <h2>主要討論事項與結論</h2>
+        <ol>
+            <li><strong>年度目標回顧：</strong>已達成75%的年度計畫，需加強市場推廣策略。</li>
+            <li><strong>下一步計畫：</strong>推動新產品開發，並增加團隊合作機會。</li>
+            <li><strong>行動項目：</strong>下次會議前，各部門需提交詳細推廣計畫。</li>
+        </ol>
+
+        <p><strong>下次會議時間：</strong>2024年10月15日 下午 2:00</p>
+    </div>
+</body>
+</html>
