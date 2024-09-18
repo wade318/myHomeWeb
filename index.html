@@ -118,13 +118,32 @@
             justify-content: center;
             
         }
+
+
+#optionsList {
+    display: flex; /* 使用 flexbox 布局 */
+    flex-wrap: nowrap; /* 不允許項目換行 */
+    overflow-x: auto; /* 水平滾動條 */
+    gap: 10px; /* 在項目之間添加間隔 */
+    margin-bottom: 20px; /* 在列表和按鈕之間增加一些間隔 */
+}
+
+#optionsList li {
+    background-color: #f0f0f0; /* 背景顏色 */
+    padding: 5px 10px; /* 內部填充 */
+    border-radius: 5px; /* 圓角邊框 */
+}
+
+
+
+
     </style>
 </head>
 <body>
 
     <div id="titleContainer">
         <h1>第三屆家幸福社區<br> 管理委員會 抽籤</h1>
-        <button class="small" onclick="switchToDesktop()">切換到電腦排版</button>
+        <!-- <button class="small" onclick="switchToDesktop()">切換到電腦排版</button> -->
     </div>
     <div class="button-group">
         <button onclick="startFormal()">正式開始</button>
@@ -132,13 +151,13 @@
         <!-- <button onclick="startLargeTest()">大數測試</button> -->
         <!-- <button class="small" onclick="switchToDesktop()">切換到電腦排版</button> -->
     </div>
+    <!-- <div id="optionsList"></div> -->
+
     <div class="button-group">
         <button onclick="startDrawing()">開始抽籤</button>
         <button id="clearHistory" onclick="clearItemHistory()">清除歷史紀錄</button>
     </div>
-    <!-- <div class="button-group">
-        <button onclick="switchToDesktop()">切换到電腦排版</button>
-    </div> -->
+
     <p id="randomOption"></p>
 
     <div id="history">
@@ -180,6 +199,12 @@
             'C1', 'C2', 'C3', 'C5', 'C6', 'C7',
             'D1', 'D2', 'D3', 'D5', 'D6'
         ];
+        const removalMap = {
+                0: ['A5','B2','B6','C5','C7'],    // 主任委員
+                1: ['A5','B6','C3','C5','C7'],    // 副主任委員
+                2: ['A1','A5','B6','C5','C7'],    // 財務委員
+                3: ['A5','A6','B6','C5','C7']     // 管理委員
+        };
         const roles = ['主任委員', '副主任委員', '財務委員', '管理委員'];
         let isFormal = false; // 标记是否为正式开始
         let isTestRun = false; // 标记是否为抽籤试跑
@@ -254,20 +279,23 @@
 
 
 
+        // const removalMap111 = {
 
+        //     0: ['A5','B2','B6','C5','C7'],    // 主任委員
+        //     1: ['A5','B6','C3','C5','C7'],           // 副主任委員
+        //     2: ['A1','A5','B6','C5','C7'],           // 財務委員
+        //     3: ['A5','A6','B6','C5','C7']            // 管理委員
+        // };
         function removeSamples(role) {
             // 根据当前的角色来移除指定的样本
-            const removalMap = {
-                // 0: ['B2','A5','B6','C5','C7'],    // 主任委員
-                // 1: ['A5','B6','C5','C7'],           // 副主任委員
-                // 2: ['A5','B6','C5','C7'],           // 財務委員
-                // 3: ['A5','B6','C5','C7']            // 管理委員
-                0: ['A5','B2','B6','C5','C7'],    // 主任委員
-                1: ['A5','B6','C3','C5','C7'],           // 副主任委員
-                2: ['A1','A5','B6','C5','C7'],           // 財務委員
-                3: ['A5','A6','B6','C5','C7']            // 管理委員
-            };
-    
+            // const removalMap = {
+
+            //     0: ['A5','B2','B6','C5','C7'],    // 主任委員
+            //     1: ['A5','B6','C3','C5','C7'],           // 副主任委員
+            //     2: ['A1','A5','B6','C5','C7'],           // 財務委員
+            //     3: ['A5','A6','B6','C5','C7']            // 管理委員
+            // };
+
             const toRemove = removalMap[role];
             toRemove.forEach(sample => {
                 const index = options.indexOf(sample);
@@ -280,6 +308,23 @@
             console.log(`移除了 ${roles[role]} 的样本: ${toRemove.join(', ')}`);
             console.log(`剩余选项: ${options.join(', ')}`);
         }
+
+        // function displayOptions() {
+        //     const listContainer = document.getElementById('optionsList');
+        //     const listElement = document.createElement('ul');
+        //     listElement.style.display = 'flex'; // 確保 ul 元素也是 flex 布局
+        //     listElement.style.flexWrap = 'nowrap'; // 不允許 ul 內的項目換行
+
+        //     options.forEach(option => {
+        //         const listItem = document.createElement('li');
+        //         listItem.textContent = option;
+        //         listElement.appendChild(listItem);
+        //     });
+
+        //     listContainer.appendChild(listElement);
+        // }
+
+        // document.addEventListener('DOMContentLoaded', displayOptions);
         function addToHistory(count, result) {
             const historyBody = document.getElementById('historyBody');
             const newRow = document.createElement('tr');
@@ -341,6 +386,8 @@
                 }
             });
         }
+
+
     
         // 修改 startFormal, startTestRun, startLargeTest 函數來使用 toggleButton
         function startFormal() {
@@ -351,7 +398,27 @@
             updateButtonStyles(document.querySelector('button[onclick="startFormal()"]'));
             const historyDiv = document.getElementById('history');
 
+            // 从 removeSamples 获取移除的样本，并动态设置到 HTML 中
+            // const removedSamplesText = removeSamples.removalMap111;  // 从 removeSamples 获取移除样本的数据
+            // const removedSamplesText = removeSamples.removalMap[role].join(', ');
+
+
+
+            // 假设当前角色是0，这应该根据实际情况来设置
+            const currentRole = 0;
+            const removedSamplesText = removalMap[currentRole].join(', ');
+
+
             historyDiv.innerHTML = `
+            <div id="ellipseContainer">
+                本屆幹部： A5, B6, C5, C7<br>
+                不參與抽籤住戶名單: <br>
+                主任委員 : ${removalMap[0].join(', ')}<br>
+                副主任委員 : ${removalMap[1].join(', ')}<br>
+                財務委員 : ${removalMap[2].join(', ')}<br>
+                管理委員 : ${removalMap[3].join(', ')}<br>
+            </div>
+
                 <h2>正式抽籤</h2>
                 <table>
                     <thead>
@@ -429,6 +496,14 @@
         window.onload = function() {
             startFormal();
         };
+        // document.addEventListener('DOMContentLoaded', displayOptions);
+        document.addEventListener('DOMContentLoaded', function() {
+        var ellipseContainer = document.getElementById('ellipseContainer');
+            if (ellipseContainer) {
+                ellipseContainer.textContent = '移除样本: A1, A2, A3, A5, A6';
+            }
+        });
+
     
     </script>
 
