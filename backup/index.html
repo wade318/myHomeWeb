@@ -120,45 +120,20 @@
         }
 
 
-        #optionsList {
-            display: flex; /* 使用 flexbox 布局 */
-            flex-wrap: nowrap; /* 不允許項目換行 */
-            overflow-x: auto; /* 水平滾動條 */
-            gap: 10px; /* 在項目之間添加間隔 */
-            margin-bottom: 20px; /* 在列表和按鈕之間增加一些間隔 */
-        }
+#optionsList {
+    display: flex; /* 使用 flexbox 布局 */
+    flex-wrap: nowrap; /* 不允許項目換行 */
+    overflow-x: auto; /* 水平滾動條 */
+    gap: 10px; /* 在項目之間添加間隔 */
+    margin-bottom: 20px; /* 在列表和按鈕之間增加一些間隔 */
+}
 
-        #optionsList li {
-            background-color: #f0f0f0; /* 背景顏色 */
-            padding: 5px 10px; /* 內部填充 */
-            border-radius: 5px; /* 圓角邊框 */
-        }
+#optionsList li {
+    background-color: #f0f0f0; /* 背景顏色 */
+    padding: 5px 10px; /* 內部填充 */
+    border-radius: 5px; /* 圓角邊框 */
+}
 
-        #committeeHistory {
-            border: 2px dashed #000000; /* 設定為黑色虛線 */
-            padding: 10px; /* 加一些內距，使得文字不會太靠近邊框 */
-            margin: 10px 0; /* 加一些外距，讓區塊與其他元素有一些間隔 */
-        }
-        #ellipseContainer {
-            background-color: #f0f0f0; /* 輕灰色背景 */
-            border: 2px dashed #057; /* 灰色邊框 */
-            padding: 20px; /* 內距 */
-            margin-top: 10px; /* 上邊距 */
-            border-radius: 10px; /* 圓角邊框 */
-            font-size: 14px;
-        }
-
-        #ellipseContainer ul {
-            padding-left: 20px; /* 調整列表的內距 */
-        }
-
-        #ellipseContainer li {
-            margin-bottom: 5px; /* 列表項目間隔 */
-        }
-
-        span {
-            font-weight: bold; /* 突出顯示文本 */
-        }
 
 
 
@@ -235,12 +210,6 @@
                 1: ['C3'],    // 副主任委員
                 2: ['A1'],    // 財務委員
                 3: ['A6']     // 管理委員
-        };
-        const currentCommitteeMemberArray = {
-                0: ['B6'],    // 主任委員
-                1: ['C5'],    // 副主任委員
-                2: ['A5'],    // 財務委員
-                3: ['C7']     // 管理委員
         };
         const roles = ['主任委員', '副主任委員', '財務委員', '管理委員'];
         let isFormal = false; // 标记是否为正式开始
@@ -447,24 +416,19 @@
 
 
             historyDiv.innerHTML = `
-                <div id="ellipseContainer">
-                    <p>本屆管委會：<span style="color: rgb(0, 80, 120);">${currentCommitteeMemberArray[0]}, ${currentCommitteeMemberArray[1]}, ${currentCommitteeMemberArray[2]}, ${currentCommitteeMemberArray[3]}</span></p>
-                    <p>歷任管委會：</p>
-                    <ul>
-                        <li>歷任主委：<span style="color: green;">${committeeMemberArray[0]}</span></li>
-                        <li>歷任副主委：<span style="color: green;">${committeeMemberArray[1]}</span></li>
-                        <li>歷任財委：<span style="color: green;">${committeeMemberArray[2]}</span></li>
-                        <li>歷任管委：<span style="color: green;">${committeeMemberArray[3]}</span></li>
-                    </ul>
-                    <p>不需要參與抽籤住戶名單: (本屆幹部＋歷屆幹部)</p>
-                    <ul>
-                        <li>主任委員 : <span style="color: blue;">${removalMap[0].join(', ')}</span></li>
-                        <li>副主任委員 : <span style="color: blue;">${removalMap[1].join(', ')}</span></li>
-                        <li>財務委員 : <span style="color: blue;">${removalMap[2].join(', ')}</span></li>
-                        <li>管理委員 : <span style="color: blue;">${removalMap[3].join(', ')}</span></li>
-                    </ul>
-                </div>
-
+            <div id="ellipseContainer">
+                本屆管委會： A5, B6, C5, C7<br>
+                歷任管委會：<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;歷任主委：<span style="color: green;">${committeeMemberArray[0]}</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;歷任副主委：<span style="color: green;">${committeeMemberArray[1]}</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;歷任財委： <span style="color: green;">${committeeMemberArray[2]}</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;歷任管委： <span style="color: green;">${committeeMemberArray[3]}</span><br><br>
+                不需要參與抽籤住戶名單: (本屆幹部＋歷屆幹部)<br>
+                主任委員 : <span style="color: blue;">${removalMap[0].join(', ')}</span><br>
+                副主任委員 : <span style="color: blue;">${removalMap[1].join(', ')}</span><br>
+                財務委員 : <span style="color: blue;">${removalMap[2].join(', ')}</span><br>
+                管理委員 : <span style="color: blue;">${removalMap[3].join(', ')}</span><br>
+            </div>
 
                 <h2>正式抽籤</h2>
                 <table>
